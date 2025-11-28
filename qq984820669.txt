@@ -1,5 +1,14 @@
 
---[[
+if _G.XION_Script_Loaded then
+    _G.XION_Execution_Count = (_G.XION_Execution_Count or 0) + 1
+    return
+end
+
+_G.XION_Script_Loaded = true
+_G.XION_Execution_Count = 1
+
+game.StarterGui:SetCore("SendNotification", {Title = "注意", Text = "因为混淆会加载比较慢，并不是你没有加载", Duration = 1.5})
+wait(1.5)--[[
 
   This code has been obfuscated by Secrovia.
   Secrovia is a Lua obfuscator that protects your Lua code from reverse engineering and tampering.
