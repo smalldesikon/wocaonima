@@ -1,0 +1,115 @@
+-- LocalScript (放在StarterPlayerScripts或StarterCharacterScripts)
+
+-- 从OCR提取坐标
+local X = 90.8
+local Y = 91245.6
+local Z = 107.1
+
+local Players = game:GetService("Players")
+local UserInputService = game:GetService("UserInputService")
+local RunService = game:GetService("RunService")
+local GuiService = game:GetService("GuiService")
+
+local player = Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
+
+-- 创建UI
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "AutoClickerControl"
+screenGui.ResetOnSpawn = false
+
+local frame = Instance.new("Frame")
+frame.Name = "ControlFrame"
+frame.Size = UDim2.new(0.2, 0, 0.1, 0)
+frame.Position = UDim2.new(0.4, 0, 0.4, 0)
+frame.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+frame.BorderSizePixel = 0
+frame.Parent = screenGui
+
+local textLabel = Instance.new("TextLabel")
+textLabel.Name = "StatusLabel"
+textLabel.Size = UDim2.new(0.8, 0, 0.5, 0)
+textLabel.Position = UDim2.new(0.1, 0, 0, 0)
+textLabel.BackgroundTransparency = 1
+textLabel.Text = "自动点击中..."
+textLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+textLabel.TextScaled = true
+textLabel.Parent = frame
+
+local stopButton = Instance.new("TextButton")
+stopButton.Name = "StopButton"
+stopButton.Size = UDim2.new(0.8, 0, 0.5, 0)
+stopButton.Position = UDim2.new(0.1, 0, 0.5, 0)
+stopButton.BackgroundColor3 = Color3.fromRGB(255, 50, 50)
+stopButton.Text = "点击停止"
+stopButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+stopButton.TextScaled = true
+stopButton.Parent = frame
+
+-- 等待角色加载完成
+if not humanoidRootPart then
+    warn("⚠️ 未找到HumanoidRootPart")
+    return
+end
+
+-- 瞬移功能
+local function teleportToCoordinates()
+    -- 延迟一帧确保物理系统就绪
+    RunService.Heartbeat:Wait()
+    
+    humanoidRootPart.CFrame = CFrame.new(X, Y, Z)
+    print("✅ 已瞬移到坐标: " .. X .. ", " .. Y .. ", " .. Z)
+    
+    -- 显示UI
+    screenGui.Parent = player.PlayerGui
+    
+    -- 开始按住左键
+    holdLeftMouseButton()
+end
+
+-- 按住左键(0.1秒间隔)
+local function holdLeftMouseButton()
+    while stopClicking do
+        -- 模拟鼠标左键点击
+        UserInputService.InputBegan:Fire({
+            KeyCode = Enum.KeyCode.MouseButton1,
+            UserInputType = Enum.UserInputType.MouseButton
+        })
+        
+        wait(0.1) -- 0.1秒间隔
+        
+        -- 检查是否要停止
+        if not stopClicking then
+            break
+        end
+    end
+        
+    -- 停止后隐藏UI
+    screenGui.Parent = nil
+    print("🛑 已停止自动点击")
+end
+
+-- 控制变量
+local stopClicking = true
+
+-- 设置停止按钮的点击事件
+stopButton.MouseButton1Click:Connect(function()
+    stopClicking = false
+    textLabel.Text = "已停止"
+    stopButton.Text = "停止中..."
+    stopButton.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
+end)
+
+-- 当UI可见时设置stopClicking为true
+screenGui:GetPropertyChangedSignal("Parent"):Connect(function()
+    if screenGui.Parent then
+        stopClicking = true
+        textLabel.Text = "自动点击中..."
+        stopButton.Text = "点击停止"
+        stopButton.BackgroundColor3 = Color3.fromRGB(255, 50, 50)
+    end
+end)
+
+-- 执行瞬移
+teleportToCoordinates()
