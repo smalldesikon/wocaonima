@@ -1,0 +1,18 @@
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+
+player.CharacterAdded:Connect(function(char)
+    local root = char:WaitForChild("HumanoidRootPart", 10)
+    if root then
+        wait(0.5) -- 等待加载
+        root.CFrame = CFrame.new(210.20, 12.45, 119.90) -- 修正后的坐标
+    end
+end)
+
+-- 如果角色已存在
+if player.Character then
+    local root = player.Character:FindFirstChild("HumanoidRootPart")
+    if root then
+        root.CFrame = CFrame.new(210.20, 12.45, 119.90)
+    end
+end
