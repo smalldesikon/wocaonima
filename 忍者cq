@@ -1,18 +1,22 @@
-local Players = game:GetService("Players")
-local player = Players.LocalPlayer
+-- LocalScript，放在 StarterPlayerScripts 或 StarterCharacterScripts
 
-player.CharacterAdded:Connect(function(char)
-    local root = char:WaitForChild("HumanoidRootPart", 10)
-    if root then
-        wait(0.5) -- 等待加载
-        root.CFrame = CFrame.new(210.20, 12.45, 119.90) -- 修正后的坐标
-    end
-end)
+local X = 210.20
+local Y = 91245.77  -- 极高高度（注意风险）
+local Z = 119.90
 
--- 如果角色已存在
-if player.Character then
-    local root = player.Character:FindFirstChild("HumanoidRootPart")
-    if root then
-        root.CFrame = CFrame.new(210.20, 12.45, 119.90)
-    end
+local player = game.Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
+
+-- 等待角色加载完成
+if not humanoidRootPart then
+    warn("未找到 HumanoidRootPart")
+    return
 end
+
+-- 延迟一帧确保物理系统就绪
+game:GetService("RunService").Heartbeat:Wait()
+
+-- 执行瞬移
+humanoidRootPart.CFrame = CFrame.new(X, Y, Z)
+print("已瞬移到超高坐标: " .. X .. ", " .. Y .. ", " .. Z)
