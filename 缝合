@@ -1,0 +1,4 @@
+local msg = Instance.new("Message",workspace)
+msg.Text = "还没有缝合"
+wait(1.8)
+msg:Destroy()
